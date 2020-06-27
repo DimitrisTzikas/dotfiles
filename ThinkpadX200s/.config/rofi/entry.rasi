@@ -1,0 +1,42 @@
+@import "settings.rasi"
+
+* {
+    text-font: "Comfortaa 12";
+    icon-font: "Hurmit Nerd Font Mono 22";
+    entry-font: "Hurmit Nerd Font Mono 24";
+    icon-font-small: "Hurmit Nerd Font Mono 24";
+
+    option-6-listview-spacing: 10px;
+
+    menu-window-padding: 5px 15px;
+    menu-inputbar-margin: 10px 0px;
+    menu-prompt-padding: 10px 20px 10px 20px;
+    menu-prompt-margin: 0px 0px 0px -2px;
+    menu-element-border: 10px;
+    menu-element-padding: 3px 8px 0px -30px;
+    menu-entry-padding: 3px;
+}
+
+#window {
+    width: 830;
+    height: 155;
+}
+
+#inputbar {
+    children: [ textbox-prompt-colon, prompt, entry ];
+    margin: @menu-inputbar-margin;
+}
+
+#textbox-prompt-colon {
+    expand: false;
+    str: "Thinkpad";
+    background-color: @accent;
+    text-color: @background;
+}
+
+#entry {
+    text-color: @accent;
+    padding: @menu-entry-padding;
+    font: @entry-font;
+}
+
