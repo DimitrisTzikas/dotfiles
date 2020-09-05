@@ -6,11 +6,13 @@ import XMonad
 
 -- Layout
 import XMonad.Layout.Gaps
+import XMonad.Layout.IfMax
 import XMonad.Layout.Spacing
 import XMonad.Layout.Maximize
 import XMonad.Layout.NoBorders
 import XMonad.Layout.PerScreen
 import XMonad.Layout.MultiToggle
+import XMonad.Layout.SimpleFloat
 import XMonad.Layout.ThreeColumns
 import XMonad.Layout.ToggleLayouts
 import XMonad.Layout.BinarySpacePartition
@@ -25,7 +27,6 @@ import XMonad.Hooks.UrgencyHook
 
 -- Actions
 import XMonad.Actions.SinkAll
-import XMonad.Actions.FloatKeys
 import XMonad.Actions.CopyWindow
 import XMonad.Actions.WindowBringer
 
@@ -33,7 +34,7 @@ import XMonad.Actions.WindowBringer
 import XMonad.Util.EZConfig
 import XMonad.Util.NamedScratchpad
 import qualified XMonad.StackSet as W
-import qualified Data.Map        as M
+import qualified Data.Map as M
 import System.Exit
 import System.IO
 
@@ -41,7 +42,7 @@ import System.IO
 --------------------------------------------------------Main--------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
-main = xmonad =<< statusBar myBar myPP toggleStrutsKey (withUrgencyHook NoUrgencyHook $ myConfig)
+main = xmonad =<< statusBar myBar myPP toggleStrutsKey myConfig
 
 --------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------General-Settings-------------------------------------------------
@@ -91,18 +92,18 @@ myConfig = def {
 ---------------------------------------------------Color-Settings---------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
-myFocusedBorderColor   = "#4E7395" -- Color for focused border
-myNormalBorderColor    = "#304562" -- Color for non-focused border
-myHiddenNoWindowsColor = "#4E7395" -- Color for empty workspaces
-myNonEmptyColor        = "#304562" -- Color for non-empty workspaces
+myFocusedBorderColor   = "#1F1B1D" -- Color for focused border
+myNormalBorderColor    = "#130B0E" -- Color for non-focused border
+myHiddenNoWindowsColor = "#1F1B1D" -- Color for empty workspaces
+myNonEmptyColor        = "#130B0E" -- Color for non-empty workspaces
 myUrgentColor          = "#FF0000" -- Color for urgent workspace
-myCurrentColor         = "#95CBF0" -- Color for current workspace
+myCurrentColor         = "#787A80" -- Color for current workspace
 
 --------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------Keyboard-Settings--------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
-toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask .|. shiftMask, xK_f) -- Toggle bar gap
+toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask .|. shiftMask, xK_z) -- Toggle bar gap
 myKeyboardBindings = \c -> mkKeymap c $ [
   ("M-<Return>",      spawn myTerminal)                                            -- Launch a terminal
   , ("M-<Backspace>", kill)                                                        -- Close focused window
@@ -126,36 +127,6 @@ myKeyboardBindings = \c -> mkKeymap c $ [
   , ("M-g", windows copyToAll)                                                     -- Copy to all workspaces
   , ("M-S-g", killAllOtherCopies)						   -- Kill all other copies
   , ("M-<Space>", spawn "exec= transset-df -a -m 0; sleep .1; transset-df -a -m 1; sleep .1; transset-df -a -m 0; sleep .1; transset-df -a -m 1") -- Flashes focused window (Needs transset-df)
-
-  -- Floating windows
-  --keysMoveWindowTo (x, y) (gx1, gy1) windowId
-  --, ("M-S-p", withFocused (keysMoveWindowTo (1275,795) (1, 1)))
-  --, ("M-S-p", withFocused (keysResizeWindow (0,20) (0,0)))                       -- Resize Y 20
-  --, ("M-S-o", withFocused (keysResizeWindow (20,0) (0,0)))                       -- Resize X 20
-  --, ("M-S-i", withFocused (keysResizeWindow (0,-20) (0,0)))                      -- Resize Y -20
-  --, ("M-S-u", withFocused (keysResizeWindow (-20,0) (0,0)))                      -- Resize X -20
-  --, ("M-p", withFocused (keysMoveWindow (0,20)))                                 -- Move down
-  --, ("M-o", withFocused (keysMoveWindow (20,0)))                                 -- Move right
-  --, ("M-i", withFocused (keysMoveWindow (0,-20)))                                -- Move up
-  --, ("M-u", withFocused (keysMoveWindow (-20,0)))                                -- Move left
-
-  --Mouse control via keyboard
-  --, ("C-<KP_Left>", spawn "exec= xdotool mousemove_relative -- -70 0")
-  --, ("C-<KP_Right>", spawn "exec= xdotool mousemove_relative 70 0")
-  --, ("C-<KP_Up>", spawn "exec= xdotool mousemove_relative 0 -70")
-  --, ("C-<KP_Down>", spawn "exec= xdotool mousemove_relative 0 70")
-  --
-  --, ("<KP_Home>", spawn "exec= xdotool mousemove_relative 0 -40 && xdotool mousemove_relative -- -40 0")
-  --, ("<KP_Up>", spawn "exec= xdotool mousemove_relative 0 -40")
-  --, ("<KP_Prior>", spawn "exec= xdotool mousemove_relative 0 -40 && xdotool mousemove_relative 40 0")
-  --, ("<KP_Right>", spawn "exec= xdotool mousemove_relative 40 0")
-  --, ("<KP_Next>", spawn "exec= xdotool mousemove_relative 0 40 && xdotool mousemove_relative 40 0")
-  --, ("<KP_Down>", spawn "exec= xdotool mousemove_relative 0 40")
-  --, ("<KP_End>", spawn "exec= xdotool mousemove_relative 0 40 && xdotool mousemove_relative -- -40 0")
-  --, ("<KP_Left>", spawn "exec= xdotool mousemove_relative -- -40 0")
-  --
-  --, ("<KP_Begin>", spawn "exec= xdotool click 1")
-  --, ("C-<KP_Begin>", spawn "exec= xdotool click 3")
 
   -- mod-[0..9], Go to workspace N
   , ("M-1",       windows $ W.greedyView wp1)
@@ -209,24 +180,25 @@ myKeyboardBindings = \c -> mkKeymap c $ [
   , ("<XF86Explorer>", spawn "exec= playerctl next")        -- Next
   , ("<XF86AudioPrev>", spawn "exec= playerctl previous")   -- Previous
   , ("<XF86Search>", spawn "exec= playerctl previous")      -- Previous
-  , ("M-<XF86AudioRaiseVolume>", spawn "exec= volume music-up")     -- Increase audio volume
-  , ("M-<XF86AudioLowerVolume>", spawn "exec= volume music-down")   -- Decrease audio volume
+  , ("M-<F3>", spawn "exec= volume music-up")     -- Increase audio volume
+  , ("M-<F2>", spawn "exec= volume music-down")   -- Decrease audio volume
   ]
 
   ++
   [
   -- Change language
-  ("M-,",   spawn "exec= language en")
-  , ("M-.",   spawn "exec= language gr")
+  ("M-,", spawn "exec= language en")
+  -- , ("M-S-,", spawn "exec= xdotool key Caps_Lock")
+  -- , ("M-.", spawn "exec= language gr")
   ]
 
   ++
   [
-  ("M-<Delete>",          spawn "exec= xset dpms force off")                                                                                                                        -- Turn screen/s off
-  , ("M-m",                 spawn "exec= mountdm")                                                                                                                                   -- Dmenu Mount
-  , ("M-S-m",               spawn "exec= umountdm")                                                                                                                                  -- Dmenu Unmount
-  , ("M-d",                 spawn "exec= rofi -show drun -theme apps.rasi")                                                                                                                            -- Launch rofi
-  , ("<XF86ScreenSaver>",   spawn "exec= lock")                                                                                                                                      -- Lock
+  ("M-<Delete>",          spawn "exec= xset dpms force off") -- Turn screen/s off
+  , ("M-m",                 spawn "exec= mountdm") -- Dmenu Mount
+  , ("M-S-m",               spawn "exec= umountdm") -- Dmenu Unmount
+  , ("M-d",                 spawn "exec= rofi -show drun -theme apps.rasi") -- Launch rofi
+  , ("<XF86ScreenSaver>",   spawn "exec= lock") -- Lock
   ]
 
   ++
@@ -236,16 +208,15 @@ myKeyboardBindings = \c -> mkKeymap c $ [
   , ("<Print>",     spawn "exec= cd ~/Pictures && scrot 'Screenshot-$wx$h.png' && notify-send 'Cheeese!!' 'Taking screenshoot'")
   , ("M-<Print>",   spawn "exec= gnome-screenshot -a")
   , ("M-q",         spawn "exec= firefox -P Main")
-  , ("M-S-q",       spawn "exec= firefox -P research")
   , ("M-w",         spawn "exec= libreoffice")
-  , ("M-e",         spawn "exec= emacs")
+  , ("M-e",         spawn "exec= export LC_CTYPE=ja_JP.UTF-8 && emacs")
   , ("M-y",         spawn "exec= clip=$(xclip -selection c -o); mpv --ytdl-format='bestvideo[ext=mp4][height<=?720]+bestaudio[ext=m4a]' $clip")
   , ("M-S-y",       spawn "exec= clip=$(xclip -selection c -o); mpv --ytdl-format='bestvideo[ext=mp4][height<=?1080]+bestaudio[ext=m4a]' $clip")
   , ("M-c",         spawn "exec= gnome-calculator")
   , ("M-b",         spawn "exec= evince")
   , ("M-S-b",       spawn "exec= com.github.babluboy.bookworm")
   , ("M-v",         spawn "exec= anki")
-  , ("M-S-n",       spawn "exec= zim")
+  , ("M-S-c",         spawn "exec= calibre")
   , ("M-x",         spawn "exec= redshift -O 3500")
   , ("M-S-x",       spawn "exec= redshift -x")
   ]
@@ -253,8 +224,9 @@ myKeyboardBindings = \c -> mkKeymap c $ [
   ++
   [
   -- Scratchpad
-  ("M-h", namedScratchpadAction scratchpads "mpv")
-  , ("M-S-h", gotoMenu)
+  ("M-t", namedScratchpadAction myScratchPads "terminal")
+  , ("M-S-h", namedScratchpadAction myScratchPads "mpv")
+  , ("M-h", gotoMenu)
   ]
 
   ++
@@ -283,28 +255,29 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $ [
 --------------------------------------------------------------------------------------------------------------------
 
 myLayout =
-  toggleLayouts (noBorders Full)
-  $ avoidStruts
-  $ onWorkspace wp2 (tiledGaps ||| tiled ||| emptyBSP ||| centered ||| centeredLarge)
-  $ onWorkspace wp3 (tiledGaps ||| tiled)
+  toggleLayouts (simpleFloat)
+  $ onWorkspace wp1 (IfMax 1 centered (tiled ||| threeColumns))
+  $ onWorkspace wp2 (IfMax 1 centered (tiled ||| centered))
+  $ onWorkspace wp3 (IfMax 1 centered (tiled))
+  $ onWorkspace wp4 (IfMax 1 (tiledGaps ||| centered) (tiled ||| emptyBSP))
+  $ onWorkspace wp5 (IfMax 1 centered (emptyBSP))
   $ onWorkspace wp9 (Tall nmaster delta (9/12))
-  $ onWorkspace wp10 (noBorders Full ||| tiledGaps)
-  $ onWorkspace wp11 (noBorders Full ||| tiledGaps)
-  $ onWorkspace wp12 (noBorders Full ||| tiledGaps)
-  $ onWorkspace wp13 (noBorders Full ||| tiledGaps)
-  $ onWorkspace wp15 (noBorders Full ||| tiledGaps)
-  $ onWorkspace wp16 (noBorders Full ||| tiledGaps)
-  $ onWorkspace wp17 (noBorders Full)
-  $ tiledGaps ||| tiled ||| threeColumns
-
+  $ onWorkspace wp10 (fullGaps ||| tiledGaps)
+  $ onWorkspace wp11 (fullGaps ||| tiledGaps)
+  $ onWorkspace wp12 (fullGaps ||| tiledGaps)
+  $ onWorkspace wp13 (IfMax 1 centered (tiled ||| emptyBSP))
+  $ onWorkspace wp15 (fullGaps ||| tiledGaps)
+  $ onWorkspace wp16 (fullGaps ||| tiledGaps)
+  $ onWorkspace wp17 (fullGaps)
+  $ IfMax 1 centered (tiled ||| emptyBSP)
+  
   where
     -- General
     tiledGaps = spacing 10 $ Tall nmaster delta ratio
     tiled = Tall nmaster delta (1/2)
     threeColumns = ThreeColMid nmaster delta (6/12)
-    centered = gaps [(L,300), (R,300)] $ Full
-    centeredLarge = gaps [(L,200), (R,200)] $ Full
-
+    centered = gaps [(U, 10), (D, 10), (L,300), (R,300)] $ Full
+    fullGaps = gaps [(U, 10), (D, 10), (L,250), (R,250)] $ Full
     -- Default number of windows in master pane
     nmaster = 1
     -- Percent of the screen to increment when resizing
@@ -316,13 +289,18 @@ myLayout =
 ------------------------------------------------Scratchpad-Settings-------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
-scratchpads = [ (NS "mpv" "mpv" (className =? "mpv") (customFloating $ W.RationalRect (1/6) (1/6) (2/3) (2/3))) ]
-
+myScratchPads = [ NS "terminal" spawnTerm findTerm manageTerm
+                , NS "mpv" "mpv" (className =? "mpv") manageTerm
+                ]
+  where
+    spawnTerm = "alacritty --class scratchpadTermite"
+    findTerm = resource =? "scratchpadTermite"
+    manageTerm = (customFloating $ W.RationalRect (1/6) (1/6) (2/3) (2/3))
 --------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------Status-Bar-Settings------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
-myBar = "$(xmobar ~/.xmonad/xmobar.conf) & $(xmobar ~/.xmonad/xmobar-top.conf)"
+myBar = "$(xmobar ~/.xmonad/xmobar.conf --wmclass=xmobar ) & $(xmobar ~/.xmonad/xmobar-top.conf --wmclass=xmobar)"
 
 myPP = xmobarPP {
   ppVisible           = xmobarColor myNonEmptyColor ""
@@ -340,7 +318,7 @@ myPP = xmobarPP {
 myStartupHook = do
   setWMName "LG3D"
   spawn "exec= pkill stalonetray;xrandr | grep -e 'VGA-1 [^ ]* primary' && stalonetray -geometry 1+0 --grow-gravity NW --icon-gravity NW || stalonetray"
-  spawn "exec= pkill xcompmgr;xcompmgr &"
+  spawn "exec= pkill picom;picom &"
   spawn "exec= xrandr --output DVI-I-1 --primary"
   spawn "exec= xsetroot -cursor_name left_ptr"
   spawn "exec= pkill dunst;dunst &"
@@ -354,6 +332,8 @@ myManageHook = composeAll [
   , className =? "kodi"                     --> doFloat
   , className =? "Gpick"                    --> doFloat
   , className =? "float"                    --> doFloat
+  , className =? "Alacritty"                --> doFloat
+  
   -- Windows force
   , className =? "Termite"                  --> doShift wp1
   --
@@ -367,10 +347,12 @@ myManageHook = composeAll [
   , className =? "jetbrains-studio"         --> doShift wp2
   , className =? "com.oracle.javafx.scenebuilder.app.SceneBuilderApp" --> doShift wp2
   , className =? "UnityHub"                 --> doShift wp2
+  , className =? "Unity"                    --> doShift wp2
   --
   , className =? "Evince"                   --> doShift wp3
   , className =? "Anki"                     --> doShift wp3
   , className =? "Com.github.babluboy.bookworm" --> doShift wp3
+  , className =? "calibre"                  --> doShift wp3
   --
   , className =? "firefox"                  --> doShift wp4
   , className =? "Tor Browser"              --> doShift wp4
@@ -396,8 +378,7 @@ myManageHook = composeAll [
   , className =? "Blueberry.py"             --> doShift wp12
   , className =? "Pavucontrol"              --> doShift wp12
   --
-  , className =? "Simplenote"               --> doShift wp13
-  , className =? "Zim"                      --> doShift wp13
+  , className =? "Chromium"                 --> doShift wp13
   --
   , className =? "libreoffice-startcenter"  --> doShift wp14
   , className =? "libreoffice-writer"       --> doShift wp14
@@ -417,5 +398,6 @@ myManageHook = composeAll [
   ---
   , className =? ""                         --> doShift wp17
   , className =? "Rhythmbox"                --> doShift wp17
+  , className =? "Com.github.needleandthread.vocal" --> doShift wp17
   ]
   

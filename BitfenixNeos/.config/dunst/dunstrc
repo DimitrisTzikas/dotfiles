@@ -27,7 +27,7 @@
     word_wrap = yes
 
 [frame]
-    width = 1
+    width = 0
     color = "000000"
 
 [shortcuts]
@@ -37,16 +37,16 @@
     context = none
 
 [urgency_low]
-    background = "#304562"
-    foreground = "#95CBF0"
+    background = "#130B0E"
+    foreground = "#787A80"
     timeout = 4
 
 [urgency_normal]
-    background = "#304562"
-    foreground = "#95CBF0"
+    background = "#130B0E"
+    foreground = "#787A80"
     timeout = 4
 
 [urgency_critical]
-    background = "#304562"
-    foreground = "#95CBF0"
+    background = "#130B0E"
+    foreground = "#787A80"
     timeout = 0

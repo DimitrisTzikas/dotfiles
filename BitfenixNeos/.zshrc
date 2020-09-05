@@ -35,8 +35,18 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.pl
 
 # Aliases
 # -- Actions
+alias start='
+rfkill unblock wifi &&
+    sudo ip link set wlp0s26u1u6 up &&
+    sudo wpa_supplicant -B -c /foobar.conf -i wlp0s26u1u6 &&
+    sudo dhcpcd &&
+    sudo systemctl start dnscrypt-proxy.service &&
+    sudo chattr -i /etc/resolv.conf &&
+    sudo cp /etc/resolv.conf.encrypt /etc/resolv.conf &&
+    sudo chattr +i /etc/resolv.conf &&
+    sudo firewall onL
+'
 alias new='termite & disown %termite'
-alias wifi='sudo -A wifi-menu'
 alias ls='lsd'
 alias help='function help(){curl cheat.sh/$1}; help'
 alias edit='file=`find ~/.dotfiles/ThinkpadX200s -type f | grep -v emacs.d | fzf` && emacs $file & disown %emacs'
@@ -81,6 +91,3 @@ alias dv='youtube-dl --add-metadata -ic' # Download video link
 alias javafx='~/.java/JDK/jdk1.8.0_202/bin/java'
 alias javacfx='~/.java/JDK/jdk1.8.0_202/bin/javac'
 alias jarfx='~/.java/JDK/jdk1.8.0_202/bin/jar'
-# -- Laravel
-alias laravel='~/.config/composer/vendor/bin/laravel'
-
