@@ -38,7 +38,7 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.pl
 alias start='
 rfkill unblock wifi &&
     sudo ip link set wlp0s26u1u6 up &&
-    sudo wpa_supplicant -B -c /foobar.conf -i wlp0s26u1u6 &&
+    sudo wpa_supplicant -B -c /etc/wpa_supplicant/wpa_supplicant.conf -i wlp0s26u1u6 &&
     sudo dhcpcd &&
     sudo systemctl start dnscrypt-proxy.service &&
     sudo chattr -i /etc/resolv.conf &&

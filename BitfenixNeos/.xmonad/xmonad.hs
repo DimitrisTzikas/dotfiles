@@ -92,12 +92,12 @@ myConfig = def {
 ---------------------------------------------------Color-Settings---------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
-myFocusedBorderColor   = "#1F1B1D" -- Color for focused border
-myNormalBorderColor    = "#130B0E" -- Color for non-focused border
-myHiddenNoWindowsColor = "#1F1B1D" -- Color for empty workspaces
-myNonEmptyColor        = "#130B0E" -- Color for non-empty workspaces
+myFocusedBorderColor   = "#2E5049" -- Color for focused border
+myNormalBorderColor    = "#203032" -- Color for non-focused border
+myHiddenNoWindowsColor = "#2E5049" -- Color for empty workspaces
+myNonEmptyColor        = "#203032" -- Color for non-empty workspaces
 myUrgentColor          = "#FF0000" -- Color for urgent workspace
-myCurrentColor         = "#787A80" -- Color for current workspace
+myCurrentColor         = "#C9C3B4" -- Color for current workspace
 
 --------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------Keyboard-Settings--------------------------------------------------
@@ -364,7 +364,10 @@ myManageHook = composeAll [
   , className =? "aft-linux-qt"             --> doShift wp5
   , className =? "Gimp-2.10"                --> doShift wp5
   --
-  , className =? "Steam"                    --> doShift wp9
+  , className =? "StardewValley.bin.x86_64" --> doShift wp8
+  , className =? "minecraft-launcher"       --> doShift wp8
+  , className =? "FML early loading progress" --> doShift wp8
+  --
   , className =? "zoom"                     --> doShift wp9
   --
   , className =? "mpv"                      --> doShift wp10
