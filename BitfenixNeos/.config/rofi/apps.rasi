@@ -1,3 +1,7 @@
+configuration {
+    modi: "drun";
+}
+
 @import "colors.rasi"
 
 * {

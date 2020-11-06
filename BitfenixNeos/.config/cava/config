@@ -1,23 +1,8 @@
 [general]
  mode = normal
  autosens = 0
- framerate = 30
+ framerate = 75
  bars = 0
  bar_width = 2.0
  bar_spacing = 1.0
- sensitivity = 1.0
-
-[color]
- gradient = 1
- gradient_color_1 = '#4E7395'
- gradient_color_2 = '#95CBF0'
- 
-[smoothing]
- monstercat = 1
-
-[eq]
- 1=2
- 2=2
- 3=1
- 4=1
- 5=0.5
+ sensitivity = 10

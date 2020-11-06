@@ -1,0 +1,7 @@
+xmonad-x86_64-linux
+xmonad.errors
+xmonad.hi
+xmonad.o
+.emacs.d
+.emacs.d.old
+oh-my-zsh

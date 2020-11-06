@@ -9,6 +9,7 @@ import XMonad.Layout.Gaps
 import XMonad.Layout.IfMax
 import XMonad.Layout.Spacing
 import XMonad.Layout.Maximize
+import XMonad.Layout.PerScreen
 import XMonad.Layout.NoBorders
 import XMonad.Layout.PerScreen
 import XMonad.Layout.MultiToggle
@@ -48,7 +49,10 @@ main = xmonad =<< statusBar myBar myPP toggleStrutsKey myConfig
 ---------------------------------------------------General-Settings-------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
-myTerminal = "termite"
+myTerminal = "alacritty"
+
+primaryDisplay = "HDMI-1"
+
 wp1 = "<fn=1>\xf120</fn>"
 wp2 = "<fn=1>\xf121</fn>"
 wp3 = "<fn=1>\xf02d</fn>"
@@ -104,29 +108,37 @@ myCurrentColor         = "#C9C3B4" -- Color for current workspace
 --------------------------------------------------------------------------------------------------------------------
 
 toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask .|. shiftMask, xK_z) -- Toggle bar gap
+
 myKeyboardBindings = \c -> mkKeymap c $ [
-  ("M-<Return>",      spawn myTerminal)                                            -- Launch a terminal
-  , ("M-<Backspace>", kill)                                                        -- Close focused window
-  , ("M-S-<Space>",   sendMessage NextLayout)                                      -- Rotate through the available layout algorithms
-  , ("M-k",           windows W.focusDown)                                         -- Move focus to the next window
-  , ("M-j",           windows W.focusUp)                                           -- Move fouces to the previous window
-  , ("M-l",           windows W.focusMaster)                                       -- Move focus to the master window
-  , ("M-S-k",         windows W.swapDown)                                          -- Swap the focused window with the next window
-  , ("M-S-j",         windows W.swapUp)                                            -- Swap the focused window with the previous window
-  , ("M-S-l",         windows W.swapMaster)                                        -- Swap the focused window and the master window
-  , ("M-'",           sendMessage Expand)                                          -- Expand the master area
-  , ("M-;",           sendMessage Shrink)                                          -- Shrink the master area
-  , ("M-S-'",         sendMessage (IncMasterN 1))                                  -- Increment the number of windows in the master area
-  , ("M-S-;",         sendMessage (IncMasterN (-1)))                               -- Deincrement the number of windows in the master area
-  , ("M-<Escape>",    sinkAll)                                                     -- Unfloat all windows
-  , ("M-S-<Delete>",  io (exitWith ExitSuccess))                                   -- Quit xmonad
-  , ("M-f", sendMessage ToggleLayout)                                              -- Toggle layout (Full screen)
-  , ("M-a", screenWorkspace 0 >>= flip whenJust (windows . W.view))                -- Switch screen 0
-  , ("M-s", screenWorkspace 1 >>= flip whenJust (windows . W.view))                -- Switch screen 1
-  , ("M-S-<Insert>",  spawn "pkill xmobar && xmonad --restart")                    -- Restart xmonad
-  , ("M-g", windows copyToAll)                                                     -- Copy to all workspaces
-  , ("M-S-g", killAllOtherCopies)						   -- Kill all other copies
-  , ("M-<Space>", spawn "exec= transset-df -a -m 0; sleep .1; transset-df -a -m 1; sleep .1; transset-df -a -m 0; sleep .1; transset-df -a -m 1") -- Flashes focused window (Needs transset-df)
+  ("M-<Return>",         spawn myTerminal)                                -- Launch a terminal
+  , ("M-<Backspace>",    kill)                                            -- Close focused window
+  , ("M-S-<Space>",      sendMessage NextLayout)                          -- Rotate through the available layouts
+  , ("M-k",              windows W.focusDown)                             -- Move focus to the next window
+  , ("M-j",              windows W.focusUp)                               -- Move fouces to the previous window
+  , ("M-l",              windows W.focusMaster)                           -- Move focus to the master window
+  , ("M-S-k",            windows W.swapDown)                              -- Swap the focused window with the next window
+  , ("M-S-j",            windows W.swapUp)                                -- Swap the focused window with the previous window
+  , ("M-S-l",            windows W.swapMaster)                            -- Swap the focused window and the master window
+  -- , ("M-'",           sendMessage Expand)                              -- Expand the master area
+  -- , ("M-;",           sendMessage Shrink)                              -- Shrink the master area
+  -- , ("M-S-'",         sendMessage (IncMasterN 1))                      -- Increment the number of windows in the master area
+  -- , ("M-S-;",         sendMessage (IncMasterN (-1)))                   -- Deincrement the number of windows in the master area
+  , ("M-<Escape>",        sinkAll)                                        -- Unfloat all windows
+  , ("M-S-<Insert>",      spawn "pkill xmobar && xmonad --restart")       -- Restart xmonad
+  , ("M-S-<Delete>",      io (exitWith ExitSuccess))                      -- Quit xmonad
+  , ("M-f",               sendMessage ToggleLayout)                       -- Toggle layout (Full screen)
+  , ("M-s",               gotoMenu)                                       -- Go to window
+  -- , ("M-a", screenWorkspace 0 >>= flip whenJust (windows . W.view))    -- Switch screen 0
+  -- , ("M-s", screenWorkspace 1 >>= flip whenJust (windows . W.view))    -- Switch screen 1
+  , ("M-g",               windows copyToAll)                              -- Copy window to all workspaces
+  , ("M-S-g",             killAllOtherCopies)			          -- Kill window all other copies
+  , ("M-<Space>",         spawn "exec= flash")                            -- Flashes focused window (Needs transset-df)
+  , ("M-,",               spawn "exec= language en")                      -- Change keyboard layout
+  , ("M-m",               spawn "exec= mountdm")                          -- Dmenu Mount
+  , ("M-S-m",             spawn "exec= umountdm")                         -- Dmenu Unmount
+  , ("M-d",               spawn "exec= rofi -show drun -theme apps.rasi") -- Launch rofi
+  , ("<XF86ScreenSaver>", spawn "exec= lock --bg")                        -- Lock
+  , ("<XF86Display>",     spawn "exec= lock --bg")                        -- Lock
 
   -- mod-[0..9], Go to workspace N
   , ("M-1",       windows $ W.greedyView wp1)
@@ -170,63 +182,48 @@ myKeyboardBindings = \c -> mkKeymap c $ [
   ++
   [
   -- Amixer audio controls
-  ("<XF86AudioRaiseVolume>", spawn "exec= volume up")       -- Increase audio volume
-  , ("<XF86AudioLowerVolume>", spawn "exec= volume down")   -- Decrease audio volume
-  , ("<XF86AudioMute>",        spawn "exec= volume toggle") -- Mute audio
+  ("<XF86AudioRaiseVolume>", spawn "exec= volume -i")        -- Increase audio volume
+  , ("<XF86AudioLowerVolume>", spawn "exec= volume -d")      -- Decrease audio volume
+  , ("<XF86AudioMute>",        spawn "exec= volume -t")      -- Mute audio
   -- Music controls
-  , ("<XF86AudioPlay>", spawn "exec= playerctl play-pause") -- Play/Pause
-  , ("<XF86LaunchA>", spawn "exec= playerctl play-pause")   -- Play/Pause
-  , ("<XF86AudioNext>", spawn "exec= playerctl next")       -- Next
-  , ("<XF86Explorer>", spawn "exec= playerctl next")        -- Next
-  , ("<XF86AudioPrev>", spawn "exec= playerctl previous")   -- Previous
-  , ("<XF86Search>", spawn "exec= playerctl previous")      -- Previous
-  , ("M-<F3>", spawn "exec= volume music-up")     -- Increase audio volume
-  , ("M-<F2>", spawn "exec= volume music-down")   -- Decrease audio volume
+  , ("<XF86AudioPlay>", spawn "exec= playerctl play-pause")  -- Play/Pause
+  , ("<XF86LaunchA>", spawn "exec= playerctl play-pause")    -- Play/Pause
+  , ("<XF86AudioNext>", spawn "exec= playerctl next")        -- Next
+  , ("<XF86Explorer>", spawn "exec= playerctl next")         -- Next
+  , ("<XF86AudioPrev>", spawn "exec= playerctl previous")    -- Previous
+  , ("<XF86Search>", spawn "exec= playerctl previous")       -- Previous
+  -- Brightness controls
+  , ("<XF86MonBrightnessUp>", spawn "exec= brightness -i")   --Increase brightness
+  , ("<XF86MonBrightnessDown>", spawn "exec= brightness -d") --Decrease brightness
+  , ("M-r", spawn "exec= ") --Rotate screen
   ]
 
   ++
   [
-  -- Change language
-  ("M-,", spawn "exec= language en")
-  -- , ("M-S-,", spawn "exec= xdotool key Caps_Lock")
-  -- , ("M-.", spawn "exec= language gr")
-  ]
-
-  ++
-  [
-  ("M-<Delete>",          spawn "exec= xset dpms force off") -- Turn screen/s off
-  , ("M-m",                 spawn "exec= mountdm") -- Dmenu Mount
-  , ("M-S-m",               spawn "exec= umountdm") -- Dmenu Unmount
-  , ("M-d",                 spawn "exec= rofi -show drun -theme apps.rasi") -- Launch rofi
-  , ("<XF86ScreenSaver>",   spawn "exec= lock") -- Lock
+  
   ]
 
   ++
   [
   -- Bind applications
-  ("<XF86Launch1>", spawn "exec= luanch")
+  ("<XF86Launch1>", spawn "exec= launch")
   , ("<Print>",     spawn "exec= cd ~/Pictures && scrot 'Screenshot-$wx$h.png' && notify-send 'Cheeese!!' 'Taking screenshoot'")
   , ("M-<Print>",   spawn "exec= gnome-screenshot -a")
   , ("M-q",         spawn "exec= firefox -P Main")
   , ("M-w",         spawn "exec= libreoffice")
   , ("M-e",         spawn "exec= export LC_CTYPE=ja_JP.UTF-8 && emacs")
-  , ("M-y",         spawn "exec= clip=$(xclip -selection c -o); mpv --ytdl-format='bestvideo[ext=mp4][height<=?720]+bestaudio[ext=m4a]' $clip")
-  , ("M-S-y",       spawn "exec= clip=$(xclip -selection c -o); mpv --ytdl-format='bestvideo[ext=mp4][height<=?1080]+bestaudio[ext=m4a]' $clip")
-  , ("M-c",         spawn "exec= gnome-calculator")
+  , ("M-y",         spawn "exec= clip=$(xclip -selection c -o); mpv --ytdl-format='bestvideo[ext=mp4][height<=?1080]+bestaudio[ext=m4a]' $clip")
   , ("M-b",         spawn "exec= evince")
-  , ("M-S-b",       spawn "exec= com.github.babluboy.bookworm")
-  , ("M-v",         spawn "exec= anki")
-  , ("M-S-c",         spawn "exec= calibre")
-  , ("M-x",         spawn "exec= redshift -O 3500")
-  , ("M-S-x",       spawn "exec= redshift -x")
+  , ("M-S-b",       spawn "exec= calibre")
   ]
 
   ++
   [
   -- Scratchpad
-  ("M-t", namedScratchpadAction myScratchPads "terminal")
-  , ("M-S-h", namedScratchpadAction myScratchPads "mpv")
-  , ("M-h", gotoMenu)
+  ("M-S-<Return>", namedScratchpadAction myScratchPads "terminal")
+  , ("M-h", namedScratchpadAction myScratchPads "mpv")
+  , ("M-c", namedScratchpadAction myScratchPads "gnome-calculator")
+  , ("M-z", namedScratchpadAction myScratchPads "zoom")
   ]
 
   ++
@@ -236,6 +233,7 @@ myKeyboardBindings = \c -> mkKeymap c $ [
   , ("M-i",        spawn "exec= desk m")
   , ("M-o",        spawn "exec= desk l")
   , ("M-p",        spawn "exec= desk bl")
+  , ("M-S-u",      spawn "exec= desk s")
   ]
 
 --------------------------------------------------------------------------------------------------------------------
@@ -253,48 +251,100 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $ [
 --------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------Layouts-Settings--------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
-
 myLayout =
   toggleLayouts (simpleFloat)
-  $ onWorkspace wp1 (IfMax 1 centered (tiled ||| threeColumns))
-  $ onWorkspace wp2 (IfMax 1 centered (tiled ||| centered))
-  $ onWorkspace wp3 (IfMax 1 centered (tiled))
-  $ onWorkspace wp4 (IfMax 1 (tiledGaps ||| centered) (tiled ||| emptyBSP))
-  $ onWorkspace wp5 (IfMax 1 centered (emptyBSP))
-  $ onWorkspace wp9 (Tall nmaster delta (9/12))
-  $ onWorkspace wp10 (fullGaps ||| tiledGaps)
-  $ onWorkspace wp11 (fullGaps ||| tiledGaps)
-  $ onWorkspace wp12 (fullGaps ||| tiledGaps)
-  $ onWorkspace wp13 (IfMax 1 centered (tiled ||| emptyBSP))
-  $ onWorkspace wp15 (fullGaps ||| tiledGaps)
-  $ onWorkspace wp16 (fullGaps ||| tiledGaps)
-  $ onWorkspace wp17 (fullGaps)
-  $ IfMax 1 centered (tiled ||| emptyBSP)
+  $ onWorkspace wp1 (
+  ifWider minResolution
+    (IfMax 1 centered (tiled ||| threeColumns))
+    (IfMax 3 (Tall 3 delta (1/2)) Full)
+  )
+  $ onWorkspace wp2 (
+  ifWider minResolution
+    (IfMax 1 centered (tiled ||| centered))
+    (IfMax 2 (Tall 2 delta (1/2)) Full)
+  )
+  $ onWorkspace wp3 (
+  ifWider minResolution
+    (IfMax 1 centered (tiled))
+    Full
+  )
+  $ onWorkspace wp4 (
+  ifWider minResolution
+    (IfMax 1 (centered ||| tiledGaps) (tiled ||| emptyBSP))
+    (IfMax 2 (Tall 2 delta (1/2) ||| Full) Full)
+  )
+  $ onWorkspace wp5 (
+  ifWider minResolution
+    (IfMax 1 centered (tiled))
+    Full
+  )
+  $ onWorkspace wp9 (
+  ifWider minResolution
+    (Tall 1 delta (9/12))
+    Full
+  )
+  $ onWorkspace wp10 (
+  ifWider minResolution
+    (fullGaps ||| tiledGaps)
+    Full
+  )
+  $ onWorkspace wp11 (
+  ifWider minResolution
+    (fullGaps ||| tiledGaps)
+    Full
+  )
+  $ onWorkspace wp12 (
+  ifWider minResolution
+    (fullGaps ||| tiledGaps)
+    Full
+  )
+  $ onWorkspace wp13 (
+  ifWider minResolution
+    (IfMax 1 centered (tiled ||| centered))
+    (IfMax 2 (Tall 2 delta (1/2)) (Full))
+  )
+  $ onWorkspace wp15 (
+  ifWider minResolution
+    (fullGaps ||| tiledGaps)
+    Full
+  )
+  $ onWorkspace wp16 (
+  ifWider minResolution
+    (fullGaps ||| tiledGaps)
+    Full
+  )
+  $ onWorkspace wp17 (
+  ifWider minResolution
+    (fullGaps)
+    Full
+  )
+  $ ifWider minResolution
+  (IfMax 1 centered (tiled ||| emptyBSP))
+  Full
   
   where
     -- General
-    tiledGaps = spacing 10 $ Tall nmaster delta ratio
-    tiled = Tall nmaster delta (1/2)
-    threeColumns = ThreeColMid nmaster delta (6/12)
+    tiledGaps = spacing 10 $ Tall 1 delta (8/12)
+    tiled = Tall 1 delta (1/2)
+    threeColumns = ThreeColMid 1 delta (5/12)
     centered = gaps [(U, 10), (D, 10), (L,300), (R,300)] $ Full
     fullGaps = gaps [(U, 10), (D, 10), (L,250), (R,250)] $ Full
-    -- Default number of windows in master pane
-    nmaster = 1
     -- Percent of the screen to increment when resizing
     delta = 5/100
-    -- Default proportion of the screen taken up by main pane
-    ratio = 8/12
+    minResolution=1280
 
 --------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------Scratchpad-Settings-------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
-myScratchPads = [ NS "terminal" spawnTerm findTerm manageTerm
-                , NS "mpv" "mpv" (className =? "mpv") manageTerm
-                ]
+myScratchPads = [
+  -- NS (WhatToExecute) (ProgramToExecute) (ClassName) (HowToManageWindow)
+  NS "terminal" "termite" (resource =? "termite") manageTerm
+  , NS "mpv" "mpv"  (className =? "mpv") manageTerm
+  , NS "gnome-calculator" "gnome-calculator" (resource =? "gnome-calculator") manageTerm
+  , NS "zoom" "zoom" (resource =? "zoom") manageTerm
+  ]
   where
-    spawnTerm = "alacritty --class scratchpadTermite"
-    findTerm = resource =? "scratchpadTermite"
     manageTerm = (customFloating $ W.RationalRect (1/6) (1/6) (2/3) (2/3))
 --------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------Status-Bar-Settings------------------------------------------------
@@ -317,9 +367,9 @@ myPP = xmobarPP {
 
 myStartupHook = do
   setWMName "LG3D"
-  spawn "exec= pkill stalonetray;xrandr | grep -e 'VGA-1 [^ ]* primary' && stalonetray -geometry 1+0 --grow-gravity NW --icon-gravity NW || stalonetray"
+  spawn "exec= pkill stalonetray;stalonetray"
   spawn "exec= pkill picom;picom &"
-  spawn "exec= xrandr --output DVI-I-1 --primary"
+  spawn (["exec= xrandr --output", primaryDisplay, "--primary"] >>= id)
   spawn "exec= xsetroot -cursor_name left_ptr"
   spawn "exec= pkill dunst;dunst &"
   spawn "exec= xset -dpms && xset s noblank && xset s off && xset b off"
@@ -329,28 +379,21 @@ myStartupHook = do
 myManageHook = composeAll [
 
   className =? "Java"                       --> doFloat
-  , className =? "kodi"                     --> doFloat
   , className =? "Gpick"                    --> doFloat
   , className =? "float"                    --> doFloat
-  , className =? "Alacritty"                --> doFloat
+  , className =? "Termite"                  --> doFloat
+  , className =? "Gnome-calculator"         --> doFloat
   
   -- Windows force
-  , className =? "Termite"                  --> doShift wp1
+  , className =? "Alacritty"                --> doShift wp1
   --
-  , className =? "Subl3"                    --> doShift wp2
   , className =? "Emacs"                    --> doShift wp2
-  , className =? "GitKraken"                --> doShift wp2
   , className =? "code-oss"                 --> doShift wp2
-  , className =? "Sublime_text"             --> doShift wp2
-  , className =? "Apache NetBeans IDE 11.2" --> doShift wp2
-  , className =? "jetbrains-idea-ce"        --> doShift wp2
-  , className =? "jetbrains-studio"         --> doShift wp2
   , className =? "com.oracle.javafx.scenebuilder.app.SceneBuilderApp" --> doShift wp2
   , className =? "UnityHub"                 --> doShift wp2
   , className =? "Unity"                    --> doShift wp2
   --
   , className =? "Evince"                   --> doShift wp3
-  , className =? "Anki"                     --> doShift wp3
   , className =? "Com.github.babluboy.bookworm" --> doShift wp3
   , className =? "calibre"                  --> doShift wp3
   --
@@ -362,45 +405,39 @@ myManageHook = composeAll [
   , className =? "VirtualBox Manager"       --> doShift wp5
   , className =? "Filezilla"                --> doShift wp5
   , className =? "aft-linux-qt"             --> doShift wp5
-  , className =? "Gimp-2.10"                --> doShift wp5
-  --
+    --
   , className =? "StardewValley.bin.x86_64" --> doShift wp8
   , className =? "minecraft-launcher"       --> doShift wp8
   , className =? "FML early loading progress" --> doShift wp8
-  --
-  , className =? "zoom"                     --> doShift wp9
   --
   , className =? "mpv"                      --> doShift wp10
   --
   , className =? "Transmission-gtk"         --> doShift wp11
   --
-  , className =? "pgadmin4"                 --> doShift wp12
-  , className =? "MEGAsync"                 --> doShift wp12
   , className =? "Syncthing GTK"            --> doShift wp12
   , className =? "Lxappearance"             --> doShift wp12
   , className =? "Blueberry.py"             --> doShift wp12
   , className =? "Pavucontrol"              --> doShift wp12
   --
   , className =? "Chromium"                 --> doShift wp13
+  , className =? "MuseScore3"               --> doShift wp13
   --
   , className =? "libreoffice-startcenter"  --> doShift wp14
   , className =? "libreoffice-writer"       --> doShift wp14
   , className =? "libreoffice"              --> doShift wp14
+  , className =? "Blender"                  --> doShift wp14
+  , className =? "Gimp-2.10"                --> doShift wp5
   --
   , className =? "scrcpy"                   --> doShift wp15
   , className =? "Evolution"                --> doShift wp15
-  , className =? "Liferea"                  --> doShift wp15
   , className =? "Gnome-calendar"           --> doShift wp15
-  , className =? "Trello"                   --> doShift wp15
   
   --
   , className =? "TelegramDesktop"          --> doShift wp16
   , className =? "discord"                  --> doShift wp16
   , className =? "Slack"                    --> doShift wp16
-  , className =? "Signal"                   --> doShift wp16
   ---
   , className =? ""                         --> doShift wp17
   , className =? "Rhythmbox"                --> doShift wp17
-  , className =? "Com.github.needleandthread.vocal" --> doShift wp17
   ]
   

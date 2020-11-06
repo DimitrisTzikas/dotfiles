@@ -36,15 +36,13 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.pl
 # Aliases
 # -- Actions
 alias start='
-rfkill unblock wifi &&
-    sudo ip link set wlp0s26u1u6 up &&
-    sudo wpa_supplicant -B -c /etc/wpa_supplicant/wpa_supplicant.conf -i wlp0s26u1u6 &&
-    sudo dhcpcd &&
+sudo dhcpcd &&
     sudo systemctl start dnscrypt-proxy.service &&
     sudo chattr -i /etc/resolv.conf &&
     sudo cp /etc/resolv.conf.encrypt /etc/resolv.conf &&
     sudo chattr +i /etc/resolv.conf &&
-    sudo firewall onL
+    sudo firewall onL &&
+    startx
 '
 alias new='termite & disown %termite'
 alias ls='lsd'
@@ -60,6 +58,7 @@ alias song='function song(){spotdl --song $1 -o m4a}; song'
 alias songs='function songs(){for line in `cat $1`; do spotdl --song $line -o m4a; done}; songs'
 alias songl='function songl(){spotdl --playlist $1}; songl'
 alias songa='function songa(){spotdl --album $1}; songa'
+alias songy='function songy(){ytmdl --format m4a --nolocal -m $1}; songy'
 alias alert='mplayer ~/.sounds/alertBeep.mp3'
 alias maudio='pacmd load-module module-remap-sink sink_name=mono master=alsa_output.pci-0000_00_1b.0.analog-stereo channels=2 channel_map=mono,mono'
 # -- Programs
@@ -83,11 +82,7 @@ alias norm='redshift -x'
 # -- Updates
 alias linkFiles='cd ~/.dotfiles/ && stow ThinkpadX200s && cd -'
 # -- System Actions
-alias update='sudo pacman -Syu && sudo flatpak update'
+alias update='sudo pacman -Syu && sudo flatpak update && pacaur -Syu'
 alias ss='sudo systemctl'
 # -- Youtube
 alias dv='youtube-dl --add-metadata -ic' # Download video link
-# -- JavaFx
-alias javafx='~/.java/JDK/jdk1.8.0_202/bin/java'
-alias javacfx='~/.java/JDK/jdk1.8.0_202/bin/javac'
-alias jarfx='~/.java/JDK/jdk1.8.0_202/bin/jar'
