@@ -53,23 +53,23 @@ myTerminal = "alacritty"
 
 primaryDisplay = "HDMI-1"
 
-wp1 = "<fn=1>\xf120</fn>"
-wp2 = "<fn=1>\xf121</fn>"
-wp3 = "<fn=1>\xf02d</fn>"
-wp4 = "<fn=1>\xf21b</fn>"
-wp5 = "<fn=1>\xf07b</fn>"
-wp6 = "<fn=1>\xf586</fn>"
-wp7 = "<fn=1>\xf583</fn>"
-wp8 = "<fn=1>\xf589</fn>"
-wp9 = "<fn=1>\xf5b3</fn>"
-wp10 = "NSP"
-wp11 = "<fn=1>\xf019</fn>"
-wp12 = "<fn=1>\xf1de</fn>"
-wp13 = "<fn=1>\xf5a1</fn>"
-wp14 = "<fn=1>\xf044</fn>"
-wp15 = "<fn=1>\xf2b6</fn>"
-wp16 = "<fn=1>\xf1d8</fn>"
-wp17 = "<fn=1>\xf51f</fn>"
+wp1 = "\xf120"
+wp2 = "\xf121"
+wp3 = "\xf02d"
+wp4 = "\xf21b"
+wp5 = "\xf07b"
+wp6 = "\xf586"
+wp7 = "\xf583"
+wp8 = "\xf589"
+wp9 = "\xf5b3"
+wp10 = "\xf556"
+wp11 = "\xf019"
+wp12 = "\xf1de"
+wp13 = "\xf5a1"
+wp14 = "\xf044"
+wp15 = "\xf2b6"
+wp16 = "\xf1d8"
+wp17 = "\xf51f"
 
 myConfig = def {
   terminal             = myTerminal
@@ -96,12 +96,12 @@ myConfig = def {
 ---------------------------------------------------Color-Settings---------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
-myFocusedBorderColor   = "#2E5049" -- Color for focused border
-myNormalBorderColor    = "#203032" -- Color for non-focused border
-myHiddenNoWindowsColor = "#2E5049" -- Color for empty workspaces
-myNonEmptyColor        = "#203032" -- Color for non-empty workspaces
+myFocusedBorderColor   = "#968079" -- Color for focused border
+myNormalBorderColor    = "#585E62" -- Color for non-focused border
+myHiddenNoWindowsColor = "#968079" -- Color for empty workspaces
+myNonEmptyColor        = "#585E62" -- Color for non-empty workspaces
 myUrgentColor          = "#FF0000" -- Color for urgent workspace
-myCurrentColor         = "#C9C3B4" -- Color for current workspace
+myCurrentColor         = "#E3E7F0" -- Color for current workspace
 
 --------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------Keyboard-Settings--------------------------------------------------
@@ -127,13 +127,14 @@ myKeyboardBindings = \c -> mkKeymap c $ [
   , ("M-S-<Insert>",      spawn "pkill xmobar && xmonad --restart")       -- Restart xmonad
   , ("M-S-<Delete>",      io (exitWith ExitSuccess))                      -- Quit xmonad
   , ("M-f",               sendMessage ToggleLayout)                       -- Toggle layout (Full screen)
-  , ("M-s",               gotoMenu)                                       -- Go to window
+  , ("M-S-f",             gotoMenu)                                       -- Go to window
   -- , ("M-a", screenWorkspace 0 >>= flip whenJust (windows . W.view))    -- Switch screen 0
   -- , ("M-s", screenWorkspace 1 >>= flip whenJust (windows . W.view))    -- Switch screen 1
   , ("M-g",               windows copyToAll)                              -- Copy window to all workspaces
   , ("M-S-g",             killAllOtherCopies)			          -- Kill window all other copies
   , ("M-<Space>",         spawn "exec= flash")                            -- Flashes focused window (Needs transset-df)
   , ("M-,",               spawn "exec= language en")                      -- Change keyboard layout
+  , ("M-S-,",             spawn "exec= xdotool key Caps_Lock")            -- Toggle Caps Lock
   , ("M-m",               spawn "exec= mountdm")                          -- Dmenu Mount
   , ("M-S-m",             spawn "exec= umountdm")                         -- Dmenu Unmount
   , ("M-d",               spawn "exec= rofi -show drun -theme apps.rasi") -- Launch rofi
@@ -195,7 +196,7 @@ myKeyboardBindings = \c -> mkKeymap c $ [
   -- Brightness controls
   , ("<XF86MonBrightnessUp>", spawn "exec= brightness -i")   --Increase brightness
   , ("<XF86MonBrightnessDown>", spawn "exec= brightness -d") --Decrease brightness
-  , ("M-r", spawn "exec= ") --Rotate screen
+  , ("M-r", spawn ("exec= rotate " ++ primaryDisplay ++ "; ~/.fehbg")) --Rotate screen
   ]
 
   ++
@@ -206,7 +207,7 @@ myKeyboardBindings = \c -> mkKeymap c $ [
   ++
   [
   -- Bind applications
-  ("<XF86Launch1>", spawn "exec= launch")
+  ("<XF86Launch5>", spawn "exec= launch")
   , ("<Print>",     spawn "exec= cd ~/Pictures && scrot 'Screenshot-$wx$h.png' && notify-send 'Cheeese!!' 'Taking screenshoot'")
   , ("M-<Print>",   spawn "exec= gnome-screenshot -a")
   , ("M-q",         spawn "exec= firefox -P Main")
@@ -261,12 +262,12 @@ myLayout =
   $ onWorkspace wp2 (
   ifWider minResolution
     (IfMax 1 centered (tiled ||| centered))
-    (IfMax 2 (Tall 2 delta (1/2)) Full)
+    verticalDefault
   )
   $ onWorkspace wp3 (
   ifWider minResolution
     (IfMax 1 centered (tiled))
-    Full
+    verticalDefault
   )
   $ onWorkspace wp4 (
   ifWider minResolution
@@ -276,27 +277,27 @@ myLayout =
   $ onWorkspace wp5 (
   ifWider minResolution
     (IfMax 1 centered (tiled))
-    Full
+    verticalDefault
   )
   $ onWorkspace wp9 (
   ifWider minResolution
     (Tall 1 delta (9/12))
-    Full
+    verticalDefault
   )
   $ onWorkspace wp10 (
   ifWider minResolution
     (fullGaps ||| tiledGaps)
-    Full
+    verticalDefault
   )
   $ onWorkspace wp11 (
   ifWider minResolution
     (fullGaps ||| tiledGaps)
-    Full
+    verticalDefault
   )
   $ onWorkspace wp12 (
   ifWider minResolution
     (fullGaps ||| tiledGaps)
-    Full
+    verticalDefault
   )
   $ onWorkspace wp13 (
   ifWider minResolution
@@ -306,7 +307,7 @@ myLayout =
   $ onWorkspace wp15 (
   ifWider minResolution
     (fullGaps ||| tiledGaps)
-    Full
+    verticalDefault
   )
   $ onWorkspace wp16 (
   ifWider minResolution
@@ -329,9 +330,13 @@ myLayout =
     threeColumns = ThreeColMid 1 delta (5/12)
     centered = gaps [(U, 10), (D, 10), (L,300), (R,300)] $ Full
     fullGaps = gaps [(U, 10), (D, 10), (L,250), (R,250)] $ Full
+    
     -- Percent of the screen to increment when resizing
     delta = 5/100
     minResolution=1280
+
+    -- Layouts
+    verticalDefault = (IfMax 2 (Tall 2 delta (1/2)) Full)
 
 --------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------Scratchpad-Settings-------------------------------------------------
@@ -342,7 +347,7 @@ myScratchPads = [
   NS "terminal" "termite" (resource =? "termite") manageTerm
   , NS "mpv" "mpv"  (className =? "mpv") manageTerm
   , NS "gnome-calculator" "gnome-calculator" (resource =? "gnome-calculator") manageTerm
-  , NS "zoom" "zoom" (resource =? "zoom") manageTerm
+  , NS "zoom" "us.zoom.Zoom" (resource =? "zoom") manageTerm
   ]
   where
     manageTerm = (customFloating $ W.RationalRect (1/6) (1/6) (2/3) (2/3))
@@ -367,13 +372,13 @@ myPP = xmobarPP {
 
 myStartupHook = do
   setWMName "LG3D"
+  spawn "exec= language en"
   spawn "exec= pkill stalonetray;stalonetray"
   spawn "exec= pkill picom;picom &"
-  spawn (["exec= xrandr --output", primaryDisplay, "--primary"] >>= id)
+  spawn ("exec= xrandr --output " ++ primaryDisplay ++ " --primary")
   spawn "exec= xsetroot -cursor_name left_ptr"
   spawn "exec= pkill dunst;dunst &"
   spawn "exec= xset -dpms && xset s noblank && xset s off && xset b off"
-  spawn "exec= xmodmap ~/.Xmodmap"
   spawn "exec= ./.fehbg"
 
 myManageHook = composeAll [
@@ -409,8 +414,6 @@ myManageHook = composeAll [
   , className =? "StardewValley.bin.x86_64" --> doShift wp8
   , className =? "minecraft-launcher"       --> doShift wp8
   , className =? "FML early loading progress" --> doShift wp8
-  --
-  , className =? "mpv"                      --> doShift wp10
   --
   , className =? "Transmission-gtk"         --> doShift wp11
   --
