@@ -1,7 +1,7 @@
 @import "settings.rasi"
 
 * {
-    text-font: "Comfortaa 12";
+    text-font: "Comfortaa 18";
     icon-font: "Hurmit Nerd Font Mono 29";
     icon-font-small: "Hurmit Nerd Font Mono 24";
 
@@ -12,12 +12,12 @@
     menu-prompt-padding: 10px 20px 10px 20px;
     menu-prompt-margin: 0px 0px 0px -2px;
     menu-element-border: 10px;
-    menu-element-padding: 3px 8px 0px -50px;
+    menu-element-padding: 3px 8px 0px -15px;
 }
 
 #window {
-    width: 830;
-    height: 155;
+    width: 400;	
+    height: 500;
 }
 
 #textbox-prompt-colon {

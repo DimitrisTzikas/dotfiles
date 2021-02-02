@@ -1,5 +1,5 @@
 clear lock
-keycode   9 = XF86Launch1 NoSymbol XF86Launch1
+keycode   9 = XF86Launch5 NoSymbol XF86Launch5
 keycode  66 = Escape NoSymbol Escape
 keycode 135 = Super_L NoSymbol Super_L
 pointer = 1 2 3

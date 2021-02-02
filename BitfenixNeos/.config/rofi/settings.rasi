@@ -1,8 +1,8 @@
 configuration {
     show-icons: true;
-    location: 5;
-    yoffset: -30;
-    xoffset: -15;
+    location: 0;
+    yoffset: 0;
+    xoffset: 0;
 }
 
 @import "colors.rasi"
@@ -18,7 +18,7 @@ configuration {
 }
 
 #listview {
-    layout: horizontal;
+    layout: vertical;
 }
 
 #element {
@@ -38,11 +38,13 @@ configuration {
 #window {
     padding: @menu-window-padding;
     children: [ inputbar, horibox ];
+    border-radius: 40px;
 }
 
 #inputbar {
     children: [ textbox-prompt-colon, prompt ];
     margin: @menu-inputbar-margin;
+    border-radius: 500px 0px 0px 500px;
 }
 
 prompt,
@@ -56,6 +58,7 @@ textbox-prompt-colon {
     margin: @menu-prompt-margin;
     background-color: @background-light;
     text-color: @accent;
+    border-radius: 0px 500px 500px 0px;
 }
 
 #horibox {
@@ -72,6 +75,7 @@ textbox-prompt-colon {
     border: @menu-element-border;
     padding: @menu-element-padding;
     border-color: @background-light;
+    border-radius: 500px;
 }
 
 #element.selected {

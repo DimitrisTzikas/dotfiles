@@ -17,9 +17,13 @@
     menu-entry-padding: 3px;
 }
 
+#listview {
+    layout: horizontal;
+}
+
 #window {
-    width: 735;	
-    height: 800;
+    width: 400;	
+    height: 150;
 }
 
 #inputbar {

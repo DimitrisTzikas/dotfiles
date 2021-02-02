@@ -36,38 +36,36 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.pl
 # Aliases
 # -- Actions
 alias start='
-sudo dhcpcd &&
+    sudo dhcpcd &&
     sudo systemctl start dnscrypt-proxy.service &&
     sudo chattr -i /etc/resolv.conf &&
     sudo cp /etc/resolv.conf.encrypt /etc/resolv.conf &&
     sudo chattr +i /etc/resolv.conf &&
-    sudo firewall onL &&
+    sudo firewall onLD &&
     startx
 '
-alias new='termite & disown %termite'
+alias study='pkill Discord; pkill telegram-deskto'
 alias ls='lsd'
 alias help='function help(){curl cheat.sh/$1}; help'
-alias edit='file=`find ~/.dotfiles/ThinkpadX200s -type f | grep -v emacs.d | fzf` && emacs $file & disown %emacs'
+alias e='emacsclient -c -t'
 alias keyboard='bluetoothctl power on && bluetoothctl connect 1C:FC:83:10:04:5B'
 alias clock='tty-clock -scnC7'
-alias server='ssh -XY dimitris@192.168.123.100'
 alias antivirus='function antivirus(){sudo clamscan $@}; antivirus'
 alias antivirusall='function antivirusall(){sudo clamscan --recursive --infected $1}; antivirusall'
 alias antivirusupdate='sudo freshclam'
-alias song='function song(){spotdl --song $1 -o m4a}; song'
+alias songy='function songy(){spotdl --song $1 -o m4a}; songy'
 alias songs='function songs(){for line in `cat $1`; do spotdl --song $line -o m4a; done}; songs'
 alias songl='function songl(){spotdl --playlist $1}; songl'
 alias songa='function songa(){spotdl --album $1}; songa'
-alias songy='function songy(){ytmdl --format m4a --nolocal -m $1}; songy'
+alias song='function song(){ytmdl --format m4a --nolocal -m $1}; song'
 alias alert='mplayer ~/.sounds/alertBeep.mp3'
-alias maudio='pacmd load-module module-remap-sink sink_name=mono master=alsa_output.pci-0000_00_1b.0.analog-stereo channels=2 channel_map=mono,mono'
+alias t='tmux'
+alias tm='tmux attach-session -t0'
+alias space='duf'
 # -- Programs
 alias encrypt='function encrypt(){gpg --pinentry-mode=loopback --symmetric --hidden-recipient --encrypt $1}; encrypt'
 alias decrypt='function decrypt(){gpg --pinentry-mode=loopback --decrypt $1}; decrypt'
-alias javacfx='~/.java/JDK/jdk1.8.0_202/bin/javac'
-alias javafx='~/.java/JDK/jdk1.8.0_202/bin/java'
 alias pomodoro='pydoro'
-alias emacs='emacs --no-window-system'
 alias texpackage='function texpackage(){tllocalmgr install $1 && sudo texhash}; texpackage'
 alias tohtml='function tohtml(){jupyter nbconvert --to html $1}; tohtml'
 # -- Change Directory
@@ -86,3 +84,4 @@ alias update='sudo pacman -Syu && sudo flatpak update && pacaur -Syu'
 alias ss='sudo systemctl'
 # -- Youtube
 alias dv='youtube-dl --add-metadata -ic' # Download video link
+

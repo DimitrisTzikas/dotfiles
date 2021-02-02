@@ -1,7 +1,6 @@
 --------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------Xmonad-Config-File-------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
-
 import XMonad
 
 -- Layout
@@ -53,28 +52,24 @@ myTerminal = "alacritty"
 
 primaryDisplay = "HDMI-1"
 
-wp1 = "\xf120"
-wp2 = "\xf121"
-wp3 = "\xf02d"
-wp4 = "\xf21b"
-wp5 = "\xf07b"
-wp6 = "\xf586"
-wp7 = "\xf583"
-wp8 = "\xf589"
-wp9 = "\xf5b3"
-wp10 = "\xf556"
-wp11 = "\xf019"
-wp12 = "\xf1de"
-wp13 = "\xf5a1"
-wp14 = "\xf044"
-wp15 = "\xf2b6"
-wp16 = "\xf1d8"
-wp17 = "\xf51f"
+wp0 = "零"
+wp1 = "一"
+wp2 = "二"
+wp3 = "三"
+wp4 = "四"
+wp5 = "五"
+wp6 = "六"
+wp7 = "七"
+wp9 = "八"
+wp8 = "九"
+wp10 = "十"
+wp11 = "十一"
+wp12 = "十二"
 
 myConfig = def {
   terminal             = myTerminal
   , modMask            = mod4Mask
-  , workspaces         = [wp1,wp2,wp3,wp4,wp5,wp6,wp7,wp8,wp9,wp10,wp11,wp12,wp13,wp14,wp15,wp16,wp17]
+  , workspaces         = [wp0,wp1,wp2,wp3,wp4,wp5,wp6,wp7,wp8,wp9,wp10,wp11,wp12]
   , focusFollowsMouse  = True
   , borderWidth        = 0
   , normalBorderColor  = myNormalBorderColor
@@ -84,8 +79,8 @@ myConfig = def {
   , keys               = myKeyboardBindings
   , mouseBindings      = myMouseBindings
 
-  -- Hooks, layout
-  , layoutHook         = myLayout
+  -- Hooks
+  , layoutHook         = layout
   , startupHook        = myStartupHook
   , manageHook         = myManageHook
   , handleEventHook    = mempty
@@ -96,12 +91,12 @@ myConfig = def {
 ---------------------------------------------------Color-Settings---------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
-myFocusedBorderColor   = "#968079" -- Color for focused border
-myNormalBorderColor    = "#585E62" -- Color for non-focused border
-myHiddenNoWindowsColor = "#968079" -- Color for empty workspaces
-myNonEmptyColor        = "#585E62" -- Color for non-empty workspaces
-myUrgentColor          = "#FF0000" -- Color for urgent workspace
-myCurrentColor         = "#E3E7F0" -- Color for current workspace
+myFocusedBorderColor   = "#34334A" -- Color for focused border
+myNormalBorderColor    = "#1B2233" -- Color for non-focused border
+myHiddenNoWindowsColor = "#34334A" -- Color for empty workspaces
+myNonEmptyColor        = "#1B2233" -- Color for non-empty workspaces
+myUrgentColor          = "#AA5555" -- Color for urgent workspace
+myCurrentColor         = "#FED4BA" -- Color for current workspace
 
 --------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------Keyboard-Settings--------------------------------------------------
@@ -115,21 +110,22 @@ myKeyboardBindings = \c -> mkKeymap c $ [
   , ("M-S-<Space>",      sendMessage NextLayout)                          -- Rotate through the available layouts
   , ("M-k",              windows W.focusDown)                             -- Move focus to the next window
   , ("M-j",              windows W.focusUp)                               -- Move fouces to the previous window
-  , ("M-l",              windows W.focusMaster)                           -- Move focus to the master window
+  , ("M-;",              windows W.focusMaster)                           -- Move focus to the master window
   , ("M-S-k",            windows W.swapDown)                              -- Swap the focused window with the next window
   , ("M-S-j",            windows W.swapUp)                                -- Swap the focused window with the previous window
-  , ("M-S-l",            windows W.swapMaster)                            -- Swap the focused window and the master window
-  -- , ("M-'",           sendMessage Expand)                              -- Expand the master area
-  -- , ("M-;",           sendMessage Shrink)                              -- Shrink the master area
-  -- , ("M-S-'",         sendMessage (IncMasterN 1))                      -- Increment the number of windows in the master area
-  -- , ("M-S-;",         sendMessage (IncMasterN (-1)))                   -- Deincrement the number of windows in the master area
+  , ("M-S-;",            windows W.swapMaster)                            -- Swap the focused window and the master window
+  , ("M-]",           sendMessage Expand)                                 -- Expand the master area
+  , ("M-[",           sendMessage Shrink)                                 -- Shrink the master area
+  , ("M-S-]",         sendMessage (IncMasterN 1))                         -- Increment the number of windows in the master area
+  , ("M-S-[",         sendMessage (IncMasterN (-1)))                      -- Deincrement the number of windows in the master area
   , ("M-<Escape>",        sinkAll)                                        -- Unfloat all windows
   , ("M-S-<Insert>",      spawn "pkill xmobar && xmonad --restart")       -- Restart xmonad
   , ("M-S-<Delete>",      io (exitWith ExitSuccess))                      -- Quit xmonad
+  , ("M-<Delete>",        spawn "xset dpms force off")                    -- Turn off screen
   , ("M-f",               sendMessage ToggleLayout)                       -- Toggle layout (Full screen)
   , ("M-S-f",             gotoMenu)                                       -- Go to window
-  -- , ("M-a", screenWorkspace 0 >>= flip whenJust (windows . W.view))    -- Switch screen 0
-  -- , ("M-s", screenWorkspace 1 >>= flip whenJust (windows . W.view))    -- Switch screen 1
+  , ("M-a", screenWorkspace 0 >>= flip whenJust (windows . W.view))       -- Switch screen 0
+  , ("M-s", screenWorkspace 1 >>= flip whenJust (windows . W.view))       -- Switch screen 1
   , ("M-g",               windows copyToAll)                              -- Copy window to all workspaces
   , ("M-S-g",             killAllOtherCopies)			          -- Kill window all other copies
   , ("M-<Space>",         spawn "exec= flash")                            -- Flashes focused window (Needs transset-df)
@@ -139,9 +135,10 @@ myKeyboardBindings = \c -> mkKeymap c $ [
   , ("M-S-m",             spawn "exec= umountdm")                         -- Dmenu Unmount
   , ("M-d",               spawn "exec= rofi -show drun -theme apps.rasi") -- Launch rofi
   , ("<XF86ScreenSaver>", spawn "exec= lock --bg")                        -- Lock
-  , ("<XF86Display>",     spawn "exec= lock --bg")                        -- Lock
+  , ("M-l",               spawn "exec= lock --bg")                        -- Lock
 
-  -- mod-[0..9], Go to workspace N
+  -- Go to workspace N
+  , ("M-`",       windows $ W.greedyView wp0)
   , ("M-1",       windows $ W.greedyView wp1)
   , ("M-2",       windows $ W.greedyView wp2)
   , ("M-3",       windows $ W.greedyView wp3)
@@ -154,30 +151,21 @@ myKeyboardBindings = \c -> mkKeymap c $ [
   , ("M-0",       windows $ W.greedyView wp10)
   , ("M--",       windows $ W.greedyView wp11)
   , ("M-=",       windows $ W.greedyView wp12)
-  , ("M-`",       windows $ W.greedyView wp13)
-  , ("M-<Tab>",   windows $ W.greedyView wp14)
-  , ("M-[",       windows $ W.greedyView wp15)
-  , ("M-]",       windows $ W.greedyView wp16)
-  , ("M-\\",      windows $ W.greedyView wp17)
 
-  -- mod-shift-[0..9], Move client to workspace N
-  , ("M-S-1",     windows $ W.shift wp1)
-  , ("M-S-2",     windows $ W.shift wp2)
-  , ("M-S-3",     windows $ W.shift wp3)
-  , ("M-S-4",     windows $ W.shift wp4)
-  , ("M-S-5",     windows $ W.shift wp5)
-  , ("M-S-6",     windows $ W.shift wp6)
-  , ("M-S-7",     windows $ W.shift wp7)
-  , ("M-S-8",     windows $ W.shift wp8)
-  , ("M-S-9",     windows $ W.shift wp9)
-  , ("M-S-0",     windows $ W.shift wp10)
-  , ("M-S--",     windows $ W.shift wp11)
-  , ("M-S-=",     windows $ W.shift wp12)
-  , ("M-S-`",     windows $ W.shift wp13)
-  , ("M-S-<Tab>", windows $ W.shift wp14)
-  , ("M-S-[",     windows $ W.shift wp15)
-  , ("M-S-]",     windows $ W.shift wp16)
-  , ("M-S-\\",    windows $ W.shift wp17)
+  -- Move client to workspace N
+  , ("M-S-`",       windows $ W.shift wp0)
+  , ("M-S-1",       windows $ W.shift wp1)
+  , ("M-S-2",       windows $ W.shift wp2)
+  , ("M-S-3",       windows $ W.shift wp3)
+  , ("M-S-4",       windows $ W.shift wp4)
+  , ("M-S-5",       windows $ W.shift wp5)
+  , ("M-S-6",       windows $ W.shift wp6)
+  , ("M-S-7",       windows $ W.shift wp7)
+  , ("M-S-8",       windows $ W.shift wp8)
+  , ("M-S-9",       windows $ W.shift wp9)
+  , ("M-S-0",       windows $ W.shift wp10)
+  , ("M-S--",       windows $ W.shift wp11)
+  , ("M-S-=",       windows $ W.shift wp12)
   ]
 
   ++
@@ -185,7 +173,8 @@ myKeyboardBindings = \c -> mkKeymap c $ [
   -- Amixer audio controls
   ("<XF86AudioRaiseVolume>", spawn "exec= volume -i")        -- Increase audio volume
   , ("<XF86AudioLowerVolume>", spawn "exec= volume -d")      -- Decrease audio volume
-  , ("<XF86AudioMute>",        spawn "exec= volume -t")      -- Mute audio
+  , ("<XF86AudioMute>", spawn "exec= volume -t")             -- Mute audio
+  , ("<XF86Tools>", spawn "exec= volume -p")                 -- Change output
   -- Music controls
   , ("<XF86AudioPlay>", spawn "exec= playerctl play-pause")  -- Play/Pause
   , ("<XF86LaunchA>", spawn "exec= playerctl play-pause")    -- Play/Pause
@@ -194,26 +183,22 @@ myKeyboardBindings = \c -> mkKeymap c $ [
   , ("<XF86AudioPrev>", spawn "exec= playerctl previous")    -- Previous
   , ("<XF86Search>", spawn "exec= playerctl previous")       -- Previous
   -- Brightness controls
-  , ("<XF86MonBrightnessUp>", spawn "exec= brightness -i")   --Increase brightness
-  , ("<XF86MonBrightnessDown>", spawn "exec= brightness -d") --Decrease brightness
-  , ("M-r", spawn ("exec= rotate " ++ primaryDisplay ++ "; ~/.fehbg")) --Rotate screen
-  ]
-
-  ++
-  [
-  
+  , ("<XF86MonBrightnessUp>", spawn ("exec= brightness -i " ++ primaryDisplay))   --Increase brightness
+  , ("<XF86MonBrightnessDown>", spawn ("exec= brightness -d " ++ primaryDisplay)) --Decrease brightness
+  , ("M-r", spawn ("exec= rotate " ++ primaryDisplay)) --Rotate screen
   ]
 
   ++
   [
   -- Bind applications
   ("<XF86Launch5>", spawn "exec= launch")
+  , ("M-<Tab>",     spawn "exec= quick")
   , ("<Print>",     spawn "exec= cd ~/Pictures && scrot 'Screenshot-$wx$h.png' && notify-send 'Cheeese!!' 'Taking screenshoot'")
   , ("M-<Print>",   spawn "exec= gnome-screenshot -a")
   , ("M-q",         spawn "exec= firefox -P Main")
-  , ("M-w",         spawn "exec= libreoffice")
-  , ("M-e",         spawn "exec= export LC_CTYPE=ja_JP.UTF-8 && emacs")
-  , ("M-y",         spawn "exec= clip=$(xclip -selection c -o); mpv --ytdl-format='bestvideo[ext=mp4][height<=?1080]+bestaudio[ext=m4a]' $clip")
+  , ("M-e",         spawn "exec= emacsclient -c")
+  , ("M-S-e",       spawn "exec= demacs")
+  , ("M-y",         spawn "exec= clip=$(xclip -selection c -o); mpv --ytdl-format='bestvideo[ext=mp4][height<=?1080]+bestaudio[ext=m4a]' $clip || mpv --ytdl $clip")
   , ("M-b",         spawn "exec= evince")
   , ("M-S-b",       spawn "exec= calibre")
   ]
@@ -225,16 +210,18 @@ myKeyboardBindings = \c -> mkKeymap c $ [
   , ("M-h", namedScratchpadAction myScratchPads "mpv")
   , ("M-c", namedScratchpadAction myScratchPads "gnome-calculator")
   , ("M-z", namedScratchpadAction myScratchPads "zoom")
+  , ("M-v", namedScratchpadAction myScratchPads "video")
+  , ("M-x", namedScratchpadAction myScratchPads "passwords")
   ]
 
   ++
   [
   -- Desk control
-  ("M-u",          spawn "exec= desk r")
-  , ("M-i",        spawn "exec= desk m")
-  , ("M-o",        spawn "exec= desk l")
-  , ("M-p",        spawn "exec= desk bl")
-  , ("M-S-u",      spawn "exec= desk s")
+  ("M-u",          spawn "exec= controller s")
+  , ("M-i",        spawn "exec= controller p")
+  , ("M-o",        spawn "exec= controller l")
+  , ("M-p",        spawn "exec= controller b")
+  , ("M-S-u",      spawn "exec= controller status")
   ]
 
 --------------------------------------------------------------------------------------------------------------------
@@ -252,8 +239,14 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $ [
 --------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------Layouts-Settings--------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
-myLayout =
+
+layout =
   toggleLayouts (simpleFloat)
+  $ onWorkspace wp0 (
+  ifWider minResolution
+    (IfMax 1 centered (tiled ||| centered))
+    (IfMax 2 (Tall 2 delta (1/2)) (Full))
+  )
   $ onWorkspace wp1 (
   ifWider minResolution
     (IfMax 1 centered (tiled ||| threeColumns))
@@ -266,12 +259,12 @@ myLayout =
   )
   $ onWorkspace wp3 (
   ifWider minResolution
-    (IfMax 1 centered (tiled))
+    (IfMax 1 centered (tiled ||| centered))
     verticalDefault
   )
   $ onWorkspace wp4 (
   ifWider minResolution
-    (IfMax 1 (centered ||| tiledGaps) (tiled ||| emptyBSP))
+    (IfMax 1 centered (tiled ||| centered))
     (IfMax 2 (Tall 2 delta (1/2) ||| Full) Full)
   )
   $ onWorkspace wp5 (
@@ -279,42 +272,37 @@ myLayout =
     (IfMax 1 centered (tiled))
     verticalDefault
   )
-  $ onWorkspace wp9 (
-  ifWider minResolution
-    (Tall 1 delta (9/12))
-    verticalDefault
-  )
-  $ onWorkspace wp10 (
-  ifWider minResolution
-    (fullGaps ||| tiledGaps)
-    verticalDefault
-  )
-  $ onWorkspace wp11 (
-  ifWider minResolution
-    (fullGaps ||| tiledGaps)
-    verticalDefault
-  )
-  $ onWorkspace wp12 (
-  ifWider minResolution
-    (fullGaps ||| tiledGaps)
-    verticalDefault
-  )
-  $ onWorkspace wp13 (
+  $ onWorkspace wp6 (
   ifWider minResolution
     (IfMax 1 centered (tiled ||| centered))
     (IfMax 2 (Tall 2 delta (1/2)) (Full))
   )
-  $ onWorkspace wp15 (
+  $ onWorkspace wp7 (
   ifWider minResolution
-    (fullGaps ||| tiledGaps)
+    (centered ||| Full)
     verticalDefault
   )
-  $ onWorkspace wp16 (
+  $ onWorkspace wp8 (
   ifWider minResolution
-    (fullGaps ||| tiledGaps)
+    (fullGaps ||| tiled)
+    verticalDefault
+  )
+  $ onWorkspace wp9 (
+  ifWider minResolution
+    (fullGaps ||| tiled)
+    verticalDefault
+  )
+  $ onWorkspace wp10 (
+  ifWider minResolution
+    (fullGaps ||| tiled)
+    verticalDefault
+  )
+  $ onWorkspace wp11 (
+  ifWider minResolution
+    (fullGaps)
     Full
   )
-  $ onWorkspace wp17 (
+  $ onWorkspace wp12 (
   ifWider minResolution
     (fullGaps)
     Full
@@ -348,6 +336,8 @@ myScratchPads = [
   , NS "mpv" "mpv"  (className =? "mpv") manageTerm
   , NS "gnome-calculator" "gnome-calculator" (resource =? "gnome-calculator") manageTerm
   , NS "zoom" "us.zoom.Zoom" (resource =? "zoom") manageTerm
+  , NS "video" "SVPManager" (resource =? "SVPManager") manageTerm
+  , NS "passwords" "keepassxc" (resource =? "keepassxc") manageTerm
   ]
   where
     manageTerm = (customFloating $ W.RationalRect (1/6) (1/6) (2/3) (2/3))
@@ -355,7 +345,7 @@ myScratchPads = [
 -------------------------------------------------Status-Bar-Settings------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
-myBar = "$(xmobar ~/.xmonad/xmobar.conf --wmclass=xmobar ) & $(xmobar ~/.xmonad/xmobar-top.conf --wmclass=xmobar)"
+myBar = "xmobar ~/.xmonad/xmobar.conf --wmclass=xmobar"
 
 myPP = xmobarPP {
   ppVisible           = xmobarColor myNonEmptyColor ""
@@ -374,7 +364,7 @@ myStartupHook = do
   setWMName "LG3D"
   spawn "exec= language en"
   spawn "exec= pkill stalonetray;stalonetray"
-  spawn "exec= pkill picom;picom &"
+  spawn "exec= pkill picom;picom --experimental-backends &"
   spawn ("exec= xrandr --output " ++ primaryDisplay ++ " --primary")
   spawn "exec= xsetroot -cursor_name left_ptr"
   spawn "exec= pkill dunst;dunst &"
@@ -383,64 +373,63 @@ myStartupHook = do
 
 myManageHook = composeAll [
 
-  className =? "Java"                       --> doFloat
-  , className =? "Gpick"                    --> doFloat
-  , className =? "float"                    --> doFloat
-  , className =? "Termite"                  --> doFloat
-  , className =? "Gnome-calculator"         --> doFloat
+  className =? "Java"                                                 --> doFloat
+  , className =? "Gpick"                                              --> doFloat
+  , className =? "float"                                              --> doFloat
+  , className =? "Termite"                                            --> doFloat
+  , className =? "Gnome-calculator"                                   --> doFloat
+  , className =? "KeePassXC"                                          --> doFloat
   
   -- Windows force
-  , className =? "Alacritty"                --> doShift wp1
-  --
-  , className =? "Emacs"                    --> doShift wp2
-  , className =? "code-oss"                 --> doShift wp2
-  , className =? "com.oracle.javafx.scenebuilder.app.SceneBuilderApp" --> doShift wp2
-  , className =? "UnityHub"                 --> doShift wp2
-  , className =? "Unity"                    --> doShift wp2
-  --
-  , className =? "Evince"                   --> doShift wp3
-  , className =? "Com.github.babluboy.bookworm" --> doShift wp3
-  , className =? "calibre"                  --> doShift wp3
-  --
-  , className =? "firefox"                  --> doShift wp4
-  , className =? "Tor Browser"              --> doShift wp4
-  , className =? "qutebrowser"              --> doShift wp4
-  --
-  , className =? "Org.gnome.Nautilus"       --> doShift wp5
-  , className =? "VirtualBox Manager"       --> doShift wp5
-  , className =? "Filezilla"                --> doShift wp5
-  , className =? "aft-linux-qt"             --> doShift wp5
-    --
-  , className =? "StardewValley.bin.x86_64" --> doShift wp8
-  , className =? "minecraft-launcher"       --> doShift wp8
-  , className =? "FML early loading progress" --> doShift wp8
-  --
-  , className =? "Transmission-gtk"         --> doShift wp11
-  --
-  , className =? "Syncthing GTK"            --> doShift wp12
-  , className =? "Lxappearance"             --> doShift wp12
-  , className =? "Blueberry.py"             --> doShift wp12
-  , className =? "Pavucontrol"              --> doShift wp12
-  --
-  , className =? "Chromium"                 --> doShift wp13
-  , className =? "MuseScore3"               --> doShift wp13
-  --
-  , className =? "libreoffice-startcenter"  --> doShift wp14
-  , className =? "libreoffice-writer"       --> doShift wp14
-  , className =? "libreoffice"              --> doShift wp14
-  , className =? "Blender"                  --> doShift wp14
-  , className =? "Gimp-2.10"                --> doShift wp5
-  --
-  , className =? "scrcpy"                   --> doShift wp15
-  , className =? "Evolution"                --> doShift wp15
-  , className =? "Gnome-calendar"           --> doShift wp15
-  
-  --
-  , className =? "TelegramDesktop"          --> doShift wp16
-  , className =? "discord"                  --> doShift wp16
-  , className =? "Slack"                    --> doShift wp16
+  , className =? "Chromium"                                           --> doShift wp0
+  , className =? "MuseScore3"                                         --> doShift wp0
   ---
-  , className =? ""                         --> doShift wp17
-  , className =? "Rhythmbox"                --> doShift wp17
+  , className =? "Alacritty"                                          --> doShift wp1
+  ---
+  , className =? "Emacs"                                              --> doShift wp2
+  , className =? "code-oss"                                           --> doShift wp2
+  , className =? "com.oracle.javafx.scenebuilder.app.SceneBuilderApp" --> doShift wp2
+  , className =? "UnityHub"                                           --> doShift wp2
+  , className =? "Unity"                                              --> doShift wp2
+  ---
+  , className =? "Evince"                                             --> doShift wp3
+  , className =? "Com.github.babluboy.bookworm"                       --> doShift wp3
+  , className =? "calibre"                                            --> doShift wp3
+  ---
+  , className =? "firefox"                                            --> doShift wp4
+  , className =? "Tor Browser"                                        --> doShift wp4
+  , className =? "qutebrowser"                                        --> doShift wp4
+  ---
+  , className =? "Org.gnome.Nautilus"                                 --> doShift wp5
+  , className =? "VirtualBox Manager"                                 --> doShift wp5
+  , className =? "Filezilla"                                          --> doShift wp5
+  , className =? "aft-linux-qt"                                       --> doShift wp5
+  , className =? "Gimp-2.10"                                          --> doShift wp5
+  ---
+  , className =? "libreoffice-startcenter"                            --> doShift wp6
+  , className =? "libreoffice-writer"                                 --> doShift wp6
+  , className =? "libreoffice"                                        --> doShift wp6
+  ---
+  , className =? "StardewValley.bin.x86_64"                           --> doShift wp7
+  , className =? "minecraft-launcher"                                 --> doShift wp7
+  , className =? "Minecraft 1.16.4"                                   --> doShift wp7
+  , className =? "FML early loading progress"                         --> doShift wp7
+  ---
+  , className =? "scrcpy"                                             --> doShift wp8
+  ---
+  , className =? "Transmission-gtk"                                   --> doShift wp9
+  ---
+  , className =? "Syncthing GTK"                                      --> doShift wp10
+  , className =? "Syncthing-gtk"                                      --> doShift wp10
+  , className =? "Lxappearance"                                       --> doShift wp10
+  , className =? "Blueberry.py"                                       --> doShift wp10
+  , className =? "Pavucontrol"                                        --> doShift wp10
+  ---
+  , className =? "TelegramDesktop"                                    --> doShift wp11
+  , className =? "discord"                                            --> doShift wp11
+  , className =? "Slack"                                              --> doShift wp11
+  ---
+  , className =? ""                                                   --> doShift wp12
+  , className =? "Rhythmbox"                                          --> doShift wp12
   ]
   

@@ -1,7 +1,7 @@
 [general]
  mode = normal
  autosens = 0
- framerate = 75
+ framerate = 80
  bars = 0
  bar_width = 2.0
  bar_spacing = 1.0

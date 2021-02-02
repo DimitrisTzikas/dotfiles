@@ -1,5 +1,6 @@
 -- Rofi
 rofi.monitor: primary
+rofi.fullscreen: false
 
 -- Xft
 Xft.dpi: 90
