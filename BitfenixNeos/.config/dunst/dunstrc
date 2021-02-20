@@ -37,16 +37,16 @@
     context = none
 
 [urgency_low]
-    background = "#1B2233"
-    foreground = "#FED4BA"
+    background = "#303A3B"
+    foreground = "#B3A496"
     timeout = 4
 
 [urgency_normal]
-    background = "#1B2233"
-    foreground = "#FED4BA"
+    background = "#303A3B"
+    foreground = "#B3A496"
     timeout = 4
 
 [urgency_critical]
-    background = "#1B2233"
-    foreground = "#FED4BA"
+    background = "#303A3B"
+    foreground = "#B3A496"
     timeout = 0

@@ -7,7 +7,7 @@ font = Monospace 10
 foreground      = #c5c8c6
 foreground_bold = #c5c8c6
 cursor          = #c5c8c6
-background	= rgba(27, 34, 51, 0.8)
+background	= rgba(48, 58, 59, 0.8)
 
 # black
 color0  = #282a2e
@@ -27,7 +27,7 @@ color11 = #f0c674
 
 # blue
 color4  = #5f819d
-color12 = #644159
+color12 = #8D745F
 
 # magenta
 color5  = #85678f

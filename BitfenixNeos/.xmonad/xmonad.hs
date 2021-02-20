@@ -27,6 +27,7 @@ import XMonad.Hooks.UrgencyHook
 
 -- Actions
 import XMonad.Actions.SinkAll
+import XMonad.Actions.CycleWS
 import XMonad.Actions.CopyWindow
 import XMonad.Actions.WindowBringer
 
@@ -91,12 +92,12 @@ myConfig = def {
 ---------------------------------------------------Color-Settings---------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
-myFocusedBorderColor   = "#34334A" -- Color for focused border
-myNormalBorderColor    = "#1B2233" -- Color for non-focused border
-myHiddenNoWindowsColor = "#34334A" -- Color for empty workspaces
-myNonEmptyColor        = "#1B2233" -- Color for non-empty workspaces
+myFocusedBorderColor   = "#60645F" -- Color for focused border
+myNormalBorderColor    = "#303A3B" -- Color for non-focused border
+myHiddenNoWindowsColor = "#60645F" -- Color for empty workspaces
+myNonEmptyColor        = "#303A3B" -- Color for non-empty workspaces
 myUrgentColor          = "#AA5555" -- Color for urgent workspace
-myCurrentColor         = "#FED4BA" -- Color for current workspace
+myCurrentColor         = "#B3A496" -- Color for current workspace
 
 --------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------Keyboard-Settings--------------------------------------------------
@@ -131,12 +132,17 @@ myKeyboardBindings = \c -> mkKeymap c $ [
   , ("M-<Space>",         spawn "exec= flash")                            -- Flashes focused window (Needs transset-df)
   , ("M-,",               spawn "exec= language en")                      -- Change keyboard layout
   , ("M-S-,",             spawn "exec= xdotool key Caps_Lock")            -- Toggle Caps Lock
-  , ("M-m",               spawn "exec= mountdm")                          -- Dmenu Mount
-  , ("M-S-m",             spawn "exec= umountdm")                         -- Dmenu Unmount
+  , ("M-m",               spawn "exec= mountm")                           -- Dmenu Mount
+  , ("M-S-m",             spawn "exec= umountm")                          -- Dmenu Unmount
   , ("M-d",               spawn "exec= rofi -show drun -theme apps.rasi") -- Launch rofi
   , ("<XF86ScreenSaver>", spawn "exec= lock --bg")                        -- Lock
   , ("M-l",               spawn "exec= lock --bg")                        -- Lock
 
+
+  , ("M-<Right>", nextWS)
+  , ("M-<Left>", prevWS)
+  , ("M-S-<Mouse-2>", prevWS)
+  
   -- Go to workspace N
   , ("M-`",       windows $ W.greedyView wp0)
   , ("M-1",       windows $ W.greedyView wp1)
@@ -345,7 +351,7 @@ myScratchPads = [
 -------------------------------------------------Status-Bar-Settings------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------
 
-myBar = "xmobar ~/.xmonad/xmobar.conf --wmclass=xmobar"
+myBar = "$(xmobar ~/.xmonad/xmobar.conf --wmclass=xmobar) & $(xmobar ~/.xmonad/xmobarL.conf --wmclass=xmobar) & $(xmobar ~/.xmonad/xmobarR.conf --wmclass=xmobar)"
 
 myPP = xmobarPP {
   ppVisible           = xmobarColor myNonEmptyColor ""
@@ -412,12 +418,13 @@ myManageHook = composeAll [
   ---
   , className =? "StardewValley.bin.x86_64"                           --> doShift wp7
   , className =? "minecraft-launcher"                                 --> doShift wp7
-  , className =? "Minecraft 1.16.4"                                   --> doShift wp7
+  , className =? "Minecraft* 1.16.4"                                  --> doShift wp7
   , className =? "FML early loading progress"                         --> doShift wp7
   ---
   , className =? "scrcpy"                                             --> doShift wp8
   ---
   , className =? "Transmission-gtk"                                   --> doShift wp9
+  , className =? "Gnome-calendar"                                     --> doShift wp9
   ---
   , className =? "Syncthing GTK"                                      --> doShift wp10
   , className =? "Syncthing-gtk"                                      --> doShift wp10

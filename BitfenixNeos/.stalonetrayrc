@@ -1,12 +1,12 @@
 decorations none
-transparent true
+transparent false
 dockapp_mode none
-background "#1B2233"
+background "#303A3B"
 kludges force_icons_size
-geometry -1-0
+geometry -345-0
 grow_gravity NE
 icon_gravity NE
-icon_size 17
+icon_size 19
 sticky true
 #window_strut none
 window_type dock

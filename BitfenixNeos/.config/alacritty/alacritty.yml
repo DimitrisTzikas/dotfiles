@@ -5,8 +5,8 @@ window:
 
 colors:
   primary:
-    background: '#1B2233'
-    foreground: '#644159'
+    background: '#303A3B'
+    foreground: '#8D745F'
 
   # Normal colors
   #  normal:

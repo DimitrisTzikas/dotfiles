@@ -3,6 +3,6 @@
  autosens = 0
  framerate = 80
  bars = 0
- bar_width = 2.0
+ bar_width = 0.5
  bar_spacing = 1.0
  sensitivity = 10

@@ -3,15 +3,12 @@ export LANG="en_US.UTF-8"
 export ZSH=~/.config/zsh/oh-my-zsh
 export TERM=xterm-256color
 
-POWERLEVEL10K_PROMPT_ON_NEWLINE=true
-POWERLEVEL10K_PROMPT_ADD_NEWLINE=true
-POWERLEVEL10k_BATTERY_STAGES=false
-POWERLEVEL10K_HOME_ICON=''
-POWERLEVEL10K_HOME_SUB_ICON=''
-POWERLEVEL10K_FOLDER_ICON=''
-POWERLEVEL10K_USER_ICON=""
-POWERLEVEL10K_ROOT_ICON=""
-POWERLEVEL10K_TIME_FORMAT='%D{%T }'
+# Sources
+source $ZSH/../p10k.zsh
+source $ZSH/oh-my-zsh.sh
+source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
 
 # Plugins
 plugins=(
@@ -26,17 +23,9 @@ HISTFILE=~/.cache/zsh/history
 HISTSIZE=100000
 SAVEHIST=100000
 
-# Sources
-source $ZSH/../p10k.zsh
-source $ZSH/oh-my-zsh.sh
-source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
-source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
-
 # Aliases
 # -- Actions
 alias start='
-    sudo dhcpcd &&
     sudo systemctl start dnscrypt-proxy.service &&
     sudo chattr -i /etc/resolv.conf &&
     sudo cp /etc/resolv.conf.encrypt /etc/resolv.conf &&
